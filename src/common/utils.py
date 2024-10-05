@@ -7,7 +7,7 @@ from src.exception import CustomException
 from pathlib import Path
 from src.logger import logging as logger
 
-def load_data(data_path: Path) -> pd.DataFrame:
+def load_data(data_path: Path | str) -> pd.DataFrame:
     """Load data from a CSV file."""
     try:
         df = pd.read_csv(data_path)
@@ -16,7 +16,7 @@ def load_data(data_path: Path) -> pd.DataFrame:
     except Exception as e:
         raise CustomException(e)
 
-def load_params(params_path: str) -> dict:
+def load_params(params_path: Path) -> dict:
     """Load parameters from a YAML file."""
     try:
         with open(params_path, 'r') as file:
