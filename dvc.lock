@@ -27,3 +27,27 @@ stages:
       md5: 1ef62945e5fffb92afab6d48fb65c23f.dir
       size: 56020
       nfiles: 1
+  data_transformation:
+    cmd: python3 src/transformation/data_transformation.py
+    deps:
+    - path: data/interim
+      hash: md5
+      md5: 7f10d83d48d37b42272d395d99408e6f.dir
+      size: 56139
+      nfiles: 2
+    - path: src/common/utils.py
+      hash: md5
+      md5: b75cda669fd9b2f73caf5269348aee0e
+      size: 1843
+      isexec: true
+    - path: src/transformation/data_transformation.py
+      hash: md5
+      md5: bf0cd9ef272d53eea6f2623ea429f020
+      size: 4049
+      isexec: true
+    outs:
+    - path: data/processed
+      hash: md5
+      md5: 037b9788833d16897ddd8f7fbb9fa38a.dir
+      size: 166452
+      nfiles: 3
