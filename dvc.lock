@@ -5,8 +5,8 @@ stages:
     deps:
     - path: src/common/utils.py
       hash: md5
-      md5: 673b04d7e3e53ef8ddf2e7b6e0b63e9c
-      size: 2646
+      md5: efba8b104e4ea827eb44762861a14f96
+      size: 4690
       isexec: true
     - path: src/data/data_ingestion.py
       hash: md5
@@ -37,8 +37,8 @@ stages:
       nfiles: 2
     - path: src/common/utils.py
       hash: md5
-      md5: 673b04d7e3e53ef8ddf2e7b6e0b63e9c
-      size: 2646
+      md5: efba8b104e4ea827eb44762861a14f96
+      size: 4690
       isexec: true
     - path: src/transformation/data_transformation.py
       hash: md5
@@ -48,7 +48,7 @@ stages:
     outs:
     - path: data/processed
       hash: md5
-      md5: 0f7b844a0b8400f99770bc62629ab5a0.dir
+      md5: ddf73e5ce07b3e2037add18e9c957ffc.dir
       size: 166420
       nfiles: 3
   train_model:
@@ -56,18 +56,18 @@ stages:
     deps:
     - path: data/processed
       hash: md5
-      md5: 0f7b844a0b8400f99770bc62629ab5a0.dir
+      md5: ddf73e5ce07b3e2037add18e9c957ffc.dir
       size: 166420
       nfiles: 3
     - path: src/common/utils.py
       hash: md5
-      md5: 673b04d7e3e53ef8ddf2e7b6e0b63e9c
-      size: 2646
+      md5: efba8b104e4ea827eb44762861a14f96
+      size: 4690
       isexec: true
     - path: src/models/train_model.py
       hash: md5
-      md5: bdde71ac1b0a13ffec5a1e241ca12513
-      size: 3762
+      md5: c630584dce5e3e0015e69e288678bbfa
+      size: 3721
       isexec: true
     params:
       params.yaml:
@@ -123,7 +123,6 @@ stages:
             - 16
             - 64
             - 128
-          Linear Regression:
           Ridge:
             alpha:
             - 1
@@ -192,6 +191,6 @@ stages:
     outs:
     - path: data/models
       hash: md5
-      md5: 1a0ab07c1ebab5481506609195f847c6.dir
-      size: 826
+      md5: a6da8b3a3120d5bed63c0964ea18419e.dir
+      size: 878
       nfiles: 1

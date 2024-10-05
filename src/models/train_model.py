@@ -37,7 +37,6 @@ def initiate_model_trainer(train_arr: np.ndarray, test_arr: np.ndarray, params_p
             "Ridge": Ridge(),
             "Decision Tree": DecisionTreeRegressor(),
             "Gradient Boosting": GradientBoostingRegressor(),
-            "Linear Regression": LinearRegression(),
             "KNN Regressor": KNeighborsRegressor(),
             "XGB Regressor": XGBRegressor(),
             "CatBoosting Regressor": CatBoostRegressor(),
@@ -68,7 +67,7 @@ def initiate_model_trainer(train_arr: np.ndarray, test_arr: np.ndarray, params_p
 
         # Tune hyperparameters of the best model
         if params_models[best_model]:
-            r2, best_model_tuned = tune_hyperparameters(X_train, y_train, X_test, y_test, best_model_obj, params_models[best_model])
+            r2, best_model_tuned = tune_hyperparameters(X_train, y_train, X_test, y_test, best_model_obj, params_models[best_model], best_model)
 
             if r2 > best_model_score:
                 best_model_obj = best_model_tuned

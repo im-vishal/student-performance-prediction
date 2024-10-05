@@ -1,0 +1,10 @@
+{
+    "Random Forest": 0.8310956834643077,
+    "Ridge": 0.867017414126291,
+    "Decision Tree": 0.6591577819201573,
+    "Gradient Boosting": 0.8490707112267015,
+    "KNN Regressor": 0.4856315320557709,
+    "XGB Regressor": 0.38819724542049383,
+    "CatBoosting Regressor": 0.8265758847980886,
+    "AdaBoost Regressor": 0.832285324443557
+}

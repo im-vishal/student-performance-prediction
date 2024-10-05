@@ -20,8 +20,6 @@ model_tuning:
       criterion: ['squared_error', 'friedman_mse']
       max_features: ['sqrt','log2']
       n_estimators: [8,16,64,128]
-                    
-    Linear Regression:
 
     Ridge:
       alpha: [1,5,10,20,30,35,40,45,50,55,100]

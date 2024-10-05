@@ -2,6 +2,10 @@ import numpy as np
 import pandas as pd
 import yaml
 import joblib
+import json
+import dagshub
+import mlflow
+import mlflow.sklearn
 
 from src.exception import CustomException
 from pathlib import Path
@@ -9,6 +13,17 @@ from src.logger import logging as logger
 
 from sklearn.model_selection import GridSearchCV
 from typing import Any
+
+
+dagshub_url = "https://dagshub.com"
+repo_owner = 'im-vishal'
+repo_name = 'student-performance-prediction'
+
+# Set up MLflow tracking URI
+mlflow.set_tracking_uri(f'{dagshub_url}/{repo_owner}/{repo_name}.mlflow')
+
+dagshub.init(repo_owner=repo_owner, repo_name=repo_name, mlflow=True)
+
 
 def load_data(data_path: Path | str) -> pd.DataFrame:
     """Load data from a CSV file."""
@@ -54,22 +69,39 @@ def evaluate_models(X_train: np.ndarray, y_train: np.ndarray, X_test: np.ndarray
         report = {}
 
         for name, model in models.items():
-            if name == "CatBoosting Regressor":
-                model.fit(X_train, y_train, silent=True)
-            else:
-                model.fit(X_train, y_train)
-            r2 = model.score(X_test, y_test)
-            report[name] = r2
+            mlflow.autolog()
+            mlflow.set_experiment(name)
+            with mlflow.start_run(run_name=name) as run:
+                if name == "CatBoosting Regressor":
+                    model.fit(X_train, y_train, silent=True)
+                else:
+                    model.fit(X_train, y_train)
+                r2 = model.score(X_test, y_test)
+                report[name] = r2
+
+                home_dir = Path(__file__).parent.parent.parent
+                metrics_path = home_dir / "reports/metrics.json"
+                # Save model info
+                save_metrics(report, metrics_path)
+                save_model_info(run.info.run_id, "data/models", "reports/experiment_info.json")
+                mlflow.set_tag('model', name)
 
         return report
     except Exception as e:
         raise CustomException(e)
     
 
-def tune_hyperparameters(X_train, y_train, X_test, y_test, model, param):
+def tune_hyperparameters(X_train, y_train, X_test, y_test, model, param, model_name):
     try:
-        gs = GridSearchCV(model, param, cv=5)
-        gs.fit(X_train, y_train)
+        mlflow.autolog()
+        mlflow.set_experiment("grid_search")
+        gs = GridSearchCV(model, param, cv=5, n_jobs=-1)
+        with mlflow.start_run(run_name=(model_name + "grid")) as parent:
+            gs.fit(X_train, y_train)
+            for i in range(len(gs.cv_results_['params'])):
+                with mlflow.start_run(nested=True) as child:
+                    mlflow.log_params(gs.cv_results_['params'][i])
+                    mlflow.log_metric("r2", gs.cv_results_['mean_test_score'][i])
 
         model.set_params(**gs.best_params_)
         model.fit(X_train, y_train)
@@ -85,6 +117,25 @@ def load_object(file_name: Path) -> Any:
     """load the joblib object"""
     try:
         return joblib.load(file_name)
+    except Exception as e:
+        raise CustomException(e)
+    
+def save_metrics(metrics: dict, file_path: Path) -> None:
+    """Save the evaluation metrics to a JSON file."""
+    try:
+        with open(file_path, 'w') as file:
+            json.dump(metrics, file, indent=4)
+        logger.info('Metrics saved to %s', file_path)
+    except Exception as e:
+        raise CustomException(e)
+    
+def save_model_info(run_id: str, model_path: str, file_path: str) -> None:
+    """Save the model run ID and path to a JSON file."""
+    try:
+        model_info = {'run_id': run_id, 'model_path': model_path}
+        with open(file_path, 'w') as file:
+            json.dump(model_info, file, indent=4)
+        logger.info('Model info saved to %s', file_path)
     except Exception as e:
         raise CustomException(e)
     
