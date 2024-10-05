@@ -7,6 +7,9 @@ from src.exception import CustomException
 from pathlib import Path
 from src.logger import logging as logger
 
+from sklearn.model_selection import GridSearchCV
+from typing import Any
+
 def load_data(data_path: Path | str) -> pd.DataFrame:
     """Load data from a CSV file."""
     try:
@@ -45,15 +48,43 @@ def save_object(file_path: Path, obj: object, file_name: str) -> None:
     except Exception as e:
         raise CustomException(e)
     
-def evaluate_model(X_train: np.ndarray, y_train: np.ndarray, X_test: np.ndarray, y_test: np.ndarray, models: dict) -> dict:
+def evaluate_models(X_train: np.ndarray, y_train: np.ndarray, X_test: np.ndarray, y_test: np.ndarray, models: dict) -> dict:
+    """Evaluate the model"""
     try:
         report = {}
 
         for name, model in models.items():
-            model.fit(X_train, y_train)
+            if name == "CatBoosting Regressor":
+                model.fit(X_train, y_train, silent=True)
+            else:
+                model.fit(X_train, y_train)
             r2 = model.score(X_test, y_test)
             report[name] = r2
 
         return report
     except Exception as e:
         raise CustomException(e)
+    
+
+def tune_hyperparameters(X_train, y_train, X_test, y_test, model, param):
+    try:
+        gs = GridSearchCV(model, param, cv=5)
+        gs.fit(X_train, y_train)
+
+        model.set_params(**gs.best_params_)
+        model.fit(X_train, y_train)
+        r2 = model.score(X_test, y_test)
+
+        return r2, model
+    
+    except Exception as e:
+        raise CustomException(e)
+    
+
+def load_object(file_name: Path) -> Any:
+    """load the joblib object"""
+    try:
+        return joblib.load(file_name)
+    except Exception as e:
+        raise CustomException(e)
+    

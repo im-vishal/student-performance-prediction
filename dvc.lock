@@ -5,8 +5,8 @@ stages:
     deps:
     - path: src/common/utils.py
       hash: md5
-      md5: b75cda669fd9b2f73caf5269348aee0e
-      size: 1843
+      md5: 673b04d7e3e53ef8ddf2e7b6e0b63e9c
+      size: 2646
       isexec: true
     - path: src/data/data_ingestion.py
       hash: md5
@@ -15,11 +15,11 @@ stages:
       isexec: true
     params:
       params.yaml:
-        data_ingestion.test_size: 0.3
+        data_ingestion.test_size: 0.2
     outs:
     - path: data/interim
       hash: md5
-      md5: 7f10d83d48d37b42272d395d99408e6f.dir
+      md5: e6b0eaef026cdfab51044950699809cb.dir
       size: 56139
       nfiles: 2
     - path: data/raw
@@ -32,22 +32,166 @@ stages:
     deps:
     - path: data/interim
       hash: md5
-      md5: 7f10d83d48d37b42272d395d99408e6f.dir
+      md5: e6b0eaef026cdfab51044950699809cb.dir
       size: 56139
       nfiles: 2
     - path: src/common/utils.py
       hash: md5
-      md5: b75cda669fd9b2f73caf5269348aee0e
-      size: 1843
+      md5: 673b04d7e3e53ef8ddf2e7b6e0b63e9c
+      size: 2646
       isexec: true
     - path: src/transformation/data_transformation.py
       hash: md5
-      md5: bf0cd9ef272d53eea6f2623ea429f020
-      size: 4049
+      md5: 1ffd234f989518d371698e256a64f2d8
+      size: 4147
       isexec: true
     outs:
     - path: data/processed
       hash: md5
-      md5: 037b9788833d16897ddd8f7fbb9fa38a.dir
-      size: 166452
+      md5: 0f7b844a0b8400f99770bc62629ab5a0.dir
+      size: 166420
       nfiles: 3
+  train_model:
+    cmd: python3 src/models/train_model.py
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: 0f7b844a0b8400f99770bc62629ab5a0.dir
+      size: 166420
+      nfiles: 3
+    - path: src/common/utils.py
+      hash: md5
+      md5: 673b04d7e3e53ef8ddf2e7b6e0b63e9c
+      size: 2646
+      isexec: true
+    - path: src/models/train_model.py
+      hash: md5
+      md5: bdde71ac1b0a13ffec5a1e241ca12513
+      size: 3762
+      isexec: true
+    params:
+      params.yaml:
+        model_tuning.models:
+          Random Forest:
+            criterion:
+            - squared_error
+            - friedman_mse
+            - absolute_error
+            - poisson
+            max_features:
+            - sqrt
+            - log2
+            - None
+            n_estimators':
+            - 8
+            - 16
+            - 32
+            - 64
+            - 128
+            - 256
+            n_jobs:
+            - -1
+          Decision Tree:
+            criterion:
+            - squared_error
+            - friedman_mse
+            - absolute_error
+            - poisson
+            splitter:
+            - best
+            - random
+            max_features:
+            - sqrt
+            - log2
+          Gradient Boosting:
+            loss:
+            - squared_error
+            - huber
+            - absolute_error
+            subsample:
+            - 0.6
+            - 0.7
+            - 0.75
+            criterion:
+            - squared_error
+            - friedman_mse
+            max_features:
+            - sqrt
+            - log2
+            n_estimators:
+            - 8
+            - 16
+            - 64
+            - 128
+          Linear Regression:
+          Ridge:
+            alpha:
+            - 1
+            - 5
+            - 10
+            - 20
+            - 30
+            - 35
+            - 40
+            - 45
+            - 50
+            - 55
+            - 100
+            solver:
+            - auto
+            - svd
+            - cholesky
+            - lsqr
+            - sparse_cg
+            - sag
+            - saga
+          KNN Regressor:
+          XGB Regressor:
+            learning_rate:
+            - 0.1
+            - 0.01
+            - 0.05
+            - 0.001
+            n_estimators:
+            - 8
+            - 16
+            - 32
+            - 64
+            - 128
+            - 256
+          CatBoosting Regressor:
+            depth:
+            - 6
+            - 8
+            - 10
+            learning_rate:
+            - 0.01
+            - 0.05
+            - 0.1
+            iterations:
+            - 30
+            - 50
+            - 100
+          AdaBoost Regressor:
+            learning_rate:
+            - 0.1
+            - 0.01
+            - 0.5
+            - 0.001
+            loss:
+            - linear
+            - square
+            - exponential
+            n_estimators:
+            - 8
+            - 16
+            - 32
+            - 64
+            - 128
+            - 256
+    outs:
+    - path: data/models
+      hash: md5
+      md5: 1a0ab07c1ebab5481506609195f847c6.dir
+      size: 826
+      nfiles: 1

@@ -10,6 +10,8 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 from src.exception import CustomException
 from src.logger import logging as logger
 from src.common.utils import save_object, load_data
+import warnings
+warnings.filterwarnings("ignore")
 
 
 def data_transformer() -> ColumnTransformer:
@@ -28,6 +30,7 @@ def data_transformer() -> ColumnTransformer:
             steps=[
                 ("imputer", SimpleImputer(strategy="median")),
                 ("scaler", StandardScaler(with_mean=False))
+                # ("scaler", StandardScaler())
             ]
         )
         # Setting mean=False means mean is set to 0 and standardization will be zero centric instead of mean (actual mean of the data) centric. By default it is set to True.
@@ -79,6 +82,7 @@ def initiate_data_transformation(train_df: pd.DataFrame, test_df: pd.DataFrame) 
 
         train_arr = np.c_[input_feature_train_arr, np.array(target_feature_train_df)]
         test_arr = np.c_[input_feature_test_arr, np.array(target_feature_test_df)]
+
 
         return (train_arr, test_arr, preprocessing_obj)
     

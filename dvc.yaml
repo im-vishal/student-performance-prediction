@@ -17,3 +17,13 @@ stages:
     - src/transformation/data_transformation.py
     outs:
     - data/processed
+  train_model:
+    cmd: python3 src/models/train_model.py
+    deps:
+    - data/processed
+    - src/common/utils.py
+    - src/models/train_model.py
+    params:
+    - model_tuning.models
+    outs:
+    - data/models
