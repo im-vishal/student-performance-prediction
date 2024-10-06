@@ -83,9 +83,6 @@ def evaluate_models(X_train: np.ndarray, y_train: np.ndarray, X_test: np.ndarray
                 metrics_path = home_dir / "reports/metrics.json"
                 # Save model info
                 save_metrics(report, metrics_path)
-                save_model_info(run.info.run_id, "data/models", "reports/experiment_info.json")
-                mlflow.set_tag('model', name)
-
         return report
     except Exception as e:
         raise CustomException(e)
@@ -102,12 +99,16 @@ def tune_hyperparameters(X_train, y_train, X_test, y_test, model, param, model_n
                 with mlflow.start_run(nested=True) as child:
                     mlflow.log_params(gs.cv_results_['params'][i])
                     mlflow.log_metric("r2", gs.cv_results_['mean_test_score'][i])
-
+        mlflow.autolog()
+        mlflow.set_experiment("grid_search")
         model.set_params(**gs.best_params_)
-        model.fit(X_train, y_train)
-        r2 = model.score(X_test, y_test)
+        with mlflow.start_run(run_name="best-model") as parent:
+            model.fit(X_train, y_train)
+            r2 = model.score(X_test, y_test)
+            save_model_info(parent.info.run_id, "data/models", "reports/experiment_info.json", model_name)
+            mlflow.set_tag('model', model_name)
 
-        return r2, model
+            return r2, model
     
     except Exception as e:
         raise CustomException(e)
@@ -129,10 +130,10 @@ def save_metrics(metrics: dict, file_path: Path) -> None:
     except Exception as e:
         raise CustomException(e)
     
-def save_model_info(run_id: str, model_path: str, file_path: str) -> None:
+def save_model_info(run_id: str, model_path: str, file_path: str, model_name: str) -> None:
     """Save the model run ID and path to a JSON file."""
     try:
-        model_info = {'run_id': run_id, 'model_path': model_path}
+        model_info = {'run_id': run_id, 'model_path': model_path, 'model_name': model_name}
         with open(file_path, 'w') as file:
             json.dump(model_info, file, indent=4)
         logger.info('Model info saved to %s', file_path)

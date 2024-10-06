@@ -27,3 +27,9 @@ stages:
     - model_tuning.models
     outs:
     - data/models
+  model_registration:
+    cmd: python3 src/models/register_model.py
+    deps:
+    - data/models
+    - reports/experiment_info.json
+    - src/models/register_model.py

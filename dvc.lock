@@ -5,8 +5,8 @@ stages:
     deps:
     - path: src/common/utils.py
       hash: md5
-      md5: efba8b104e4ea827eb44762861a14f96
-      size: 4690
+      md5: ecc453d1ebb175fa41cbf520c748313f
+      size: 4890
       isexec: true
     - path: src/data/data_ingestion.py
       hash: md5
@@ -37,8 +37,8 @@ stages:
       nfiles: 2
     - path: src/common/utils.py
       hash: md5
-      md5: efba8b104e4ea827eb44762861a14f96
-      size: 4690
+      md5: ecc453d1ebb175fa41cbf520c748313f
+      size: 4890
       isexec: true
     - path: src/transformation/data_transformation.py
       hash: md5
@@ -61,8 +61,8 @@ stages:
       nfiles: 3
     - path: src/common/utils.py
       hash: md5
-      md5: efba8b104e4ea827eb44762861a14f96
-      size: 4690
+      md5: ecc453d1ebb175fa41cbf520c748313f
+      size: 4890
       isexec: true
     - path: src/models/train_model.py
       hash: md5
@@ -191,6 +191,24 @@ stages:
     outs:
     - path: data/models
       hash: md5
-      md5: a6da8b3a3120d5bed63c0964ea18419e.dir
+      md5: 915aa765d8c872586ee23349ec907984.dir
       size: 878
       nfiles: 1
+  model_registration:
+    cmd: python3 src/models/register_model.py
+    deps:
+    - path: data/models
+      hash: md5
+      md5: 915aa765d8c872586ee23349ec907984.dir
+      size: 878
+      nfiles: 1
+    - path: reports/experiment_info.json
+      hash: md5
+      md5: 93ebf08e8b78c69b5014ac0d984b5e56
+      size: 112
+      isexec: true
+    - path: src/models/register_model.py
+      hash: md5
+      md5: 84af95e1ccfa72247f37c45af9335304
+      size: 1867
+      isexec: true
