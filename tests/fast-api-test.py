@@ -11,20 +11,6 @@ class FastAPITests(unittest.TestCase):
         # Create a TestClient instance for testing the FastAPI app
         cls.client = TestClient(app)
 
-        # Set up Dagshub credentials for MLflow tracking
-        dagshub_token = os.getenv('DAGSHUB_PAT')
-        if not dagshub_token:
-            raise EnvironmentError("DAGSHUB_PAT environment variable is not set")
-
-        os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
-        os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
-
-        dagshub_url = "https://dagshub.com"
-        repo_owner = 'im-vishal'
-        repo_name = 'student-performance-prediction'
-
-        # Set up MLflow tracking URI
-        mlflow.set_tracking_uri(f'{dagshub_url}/{repo_owner}/{repo_name}.mlflow')
 
     # Test the home page (index endpoint)
     def test_home_page(self):
