@@ -5,6 +5,7 @@ import joblib
 import json
 import dagshub
 import mlflow
+import os
 import mlflow.sklearn
 
 from src.exception import CustomException
@@ -14,6 +15,13 @@ from src.logger import logging as logger
 from sklearn.model_selection import GridSearchCV
 from typing import Any
 
+# Set up Dagshub credentials for MLflow tracking
+dagshub_token = os.getenv('DAGSHUB_PAT')
+if not dagshub_token:
+    raise EnvironmentError("DAGSHUB_PAT environment variable is not set")
+
+os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
+os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
 
 dagshub_url = "https://dagshub.com"
 repo_owner = 'im-vishal'
@@ -22,7 +30,7 @@ repo_name = 'student-performance-prediction'
 # Set up MLflow tracking URI
 mlflow.set_tracking_uri(f'{dagshub_url}/{repo_owner}/{repo_name}.mlflow')
 
-dagshub.init(repo_owner=repo_owner, repo_name=repo_name, mlflow=True)
+# dagshub.init(repo_owner=repo_owner, repo_name=repo_name, mlflow=True)
 
 
 def load_data(data_path: Path | str) -> pd.DataFrame:

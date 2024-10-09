@@ -2,6 +2,7 @@ import json
 import mlflow
 import dagshub
 import warnings
+import os
 
 from src.logger import logging as logger
 from src.exception import CustomException
@@ -9,6 +10,13 @@ from pathlib import Path
 
 warnings.filterwarnings('ignore')
 
+# Set up Dagshub credentials for MLflow tracking
+dagshub_token = os.getenv('DAGSHUB_PAT')
+if not dagshub_token:
+    raise EnvironmentError("DAGSHUB_PAT environment variable is not set")
+
+os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
+os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
 
 dagshub_url = "https://dagshub.com"
 repo_owner = 'im-vishal'
@@ -17,7 +25,7 @@ repo_name = 'student-performance-prediction'
 # Set up MLflow tracking URI
 mlflow.set_tracking_uri(f'{dagshub_url}/{repo_owner}/{repo_name}.mlflow')
 
-dagshub.init(repo_owner=repo_owner, repo_name=repo_name, mlflow=True)
+# dagshub.init(repo_owner=repo_owner, repo_name=repo_name, mlflow=True)
 
 
 def load_model_info(file_path: Path) -> dict:
