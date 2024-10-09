@@ -17,4 +17,3 @@ uvicorn
 pyyaml
 awscli
 dagshub
-unittest
