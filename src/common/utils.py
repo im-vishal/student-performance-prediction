@@ -148,3 +148,13 @@ def save_model_info(run_id: str, model_path: str, file_path: str, model_name: st
     except Exception as e:
         raise CustomException(e)
     
+def load_model_info(file_path: Path) -> dict:
+    """Load the model info from a JSON file."""
+    try:
+        with open(file_path, 'r') as file:
+            model_info = json.load(file)
+        logger.debug('Model info loaded from %s', file_path)
+        return model_info
+    except Exception as e:
+        raise CustomException(e)
+    

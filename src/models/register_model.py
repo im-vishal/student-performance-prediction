@@ -6,6 +6,7 @@ import os
 
 from src.logger import logging as logger
 from src.exception import CustomException
+from src.common.utils import load_model_info
 from pathlib import Path
 
 warnings.filterwarnings('ignore')
@@ -27,16 +28,6 @@ mlflow.set_tracking_uri(f'{dagshub_url}/{repo_owner}/{repo_name}.mlflow')
 
 # dagshub.init(repo_owner=repo_owner, repo_name=repo_name, mlflow=True)
 
-
-def load_model_info(file_path: Path) -> dict:
-    """Load the model info from a JSON file."""
-    try:
-        with open(file_path, 'r') as file:
-            model_info = json.load(file)
-        logger.debug('Model info loaded from %s', file_path)
-        return model_info
-    except Exception as e:
-        raise CustomException(e)
 
 def register_model(model_name: str, model_info: dict):
     """Register the model to the MLflow Model Registry."""
@@ -64,8 +55,8 @@ def main():
         model_info = load_model_info(model_info_path)
         
         model_name = model_info['model_name']
-        print(model_name)
-        print(f"{model_info = }")
+        # print(model_name)
+        # print(f"{model_info = }")
         register_model(model_name, model_info)
     except Exception as e:
         raise CustomException(e)
