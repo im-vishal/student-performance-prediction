@@ -1,6 +1,5 @@
 import unittest
-import os
-import mlflow
+from unittest.mock import patch
 from fastapi.testclient import TestClient
 from main import app
 
@@ -11,15 +10,16 @@ class FastAPITests(unittest.TestCase):
         # Create a TestClient instance for testing the FastAPI app
         cls.client = TestClient(app)
 
-
-    # Test the home page (index endpoint)
-    def test_home_page(self):
+    @patch('main.load_object')  # Mock load_object to prevent DAGSHUB_PAT issue
+    @patch('main.mlflow.pyfunc.load_model')  # Mock MLflow model loading
+    def test_home_page(self, mock_load_object, mock_load_model):
         response = self.client.get('/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.text, '"Welcome to API for student score prediction."')
 
-    # Test the prediction endpoint
-    def test_predict_score(self):
+    @patch('main.load_object')  # Mock load_object
+    @patch('main.mlflow.pyfunc.load_model')  # Mock MLflow model loading
+    def test_predict_score(self, mock_load_object, mock_load_model):
         # Mock input data
         mock_input_data = {
             "gender": "male",
@@ -30,6 +30,9 @@ class FastAPITests(unittest.TestCase):
             "reading_score": 75,
             "writing_score": 80
         }
+
+        # Mock the prediction return value
+        mock_load_model.return_value.predict.return_value = [88.0]
 
         # Make a POST request to /predict with mock data
         response = self.client.post('/predict', json=mock_input_data)
