@@ -41,5 +41,7 @@ jobs:
 
       - name: Run Flask app tests
         if: success()
+        env:
+          DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
         run: |
           python3 -m unittest tests/fast-api-test.py
