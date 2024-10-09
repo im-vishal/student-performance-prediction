@@ -8,6 +8,7 @@ import pandas as pd
 import mlflow
 import mlflow.sklearn
 import dagshub
+import os
 import warnings
 
 from src.common.utils import load_object
@@ -19,6 +20,14 @@ app = FastAPI(
     description="This API will do student score prediction."
 )
 
+# Set up Dagshub credentials for MLflow tracking
+dagshub_token = os.getenv('DAGSHUB_PAT')
+if not dagshub_token:
+    raise EnvironmentError("DAGSHUB_PAT environment variable is not set")
+
+os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
+os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
+
 dagshub_url = "https://dagshub.com"
 repo_owner = 'im-vishal'
 repo_name = 'student-performance-prediction'
@@ -26,7 +35,7 @@ repo_name = 'student-performance-prediction'
 # Set up MLflow tracking URI
 mlflow.set_tracking_uri(f'{dagshub_url}/{repo_owner}/{repo_name}.mlflow')
 
-dagshub.init(repo_owner=repo_owner, repo_name=repo_name, mlflow=True)
+# dagshub.init(repo_owner=repo_owner, repo_name=repo_name, mlflow=True)
 
 # Load preprocessor and model globally
 preprocessor = load_object(Path("data/processed/preprocessor.joblib"))
