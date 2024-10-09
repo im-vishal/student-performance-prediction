@@ -1,5 +1,5 @@
 {
-    "run_id": "0f77dce3304e46618f0db88196bfd702",
-    "model_path": "data/models",
+    "run_id": "c0d03ea88ea043229beb675e6acefc8d",
+    "model_path": "model",
     "model_name": "Ridge"
 }

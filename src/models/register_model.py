@@ -1,10 +1,13 @@
 import json
 import mlflow
 import dagshub
+import warnings
 
 from src.logger import logging as logger
 from src.exception import CustomException
 from pathlib import Path
+
+warnings.filterwarnings('ignore')
 
 
 dagshub_url = "https://dagshub.com"
@@ -53,6 +56,8 @@ def main():
         model_info = load_model_info(model_info_path)
         
         model_name = model_info['model_name']
+        print(model_name)
+        print(f"{model_info = }")
         register_model(model_name, model_info)
     except Exception as e:
         raise CustomException(e)

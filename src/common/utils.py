@@ -105,7 +105,7 @@ def tune_hyperparameters(X_train, y_train, X_test, y_test, model, param, model_n
         with mlflow.start_run(run_name="best-model") as parent:
             model.fit(X_train, y_train)
             r2 = model.score(X_test, y_test)
-            save_model_info(parent.info.run_id, "data/models", "reports/experiment_info.json", model_name)
+            save_model_info(parent.info.run_id, "model", "reports/experiment_info.json", model_name)
             mlflow.set_tag('model', model_name)
 
             return r2, model
