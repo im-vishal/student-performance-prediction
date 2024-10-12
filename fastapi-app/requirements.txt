@@ -18,3 +18,4 @@ pydantic_core==2.23.4
 uvicorn==0.31.0
 botocore==1.35.21
 dvc==3.55.2
+-e git+https://github.com/im-vishal/student-performance-prediction.git@301baad7bd674c587c4f6076d81fe15bb4a23ae2#egg=studentperformanceprediction
