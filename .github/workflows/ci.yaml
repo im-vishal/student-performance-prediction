@@ -25,7 +25,7 @@ jobs:
 
       - name: install dependencies
         run: |
-          pip install -r requirements.txt
+          pip install -r fastapi-app/requirements.txt
 
       - name: run pipeline
         env:
@@ -61,4 +61,19 @@ jobs:
       - name: Push Docker image to Docker Hub
         if: success()
         run: |
-          docker push ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}/st-score2:latest
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/st-score2:latest
+
+      - name: Deploy to EC2
+        if: success()
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/st-score2:latest
+            docker stop my-app || true
+            docker rm my-app || true
+            docker run -d -p 80:8080 --name my-app \
+              -e DAGSHUB_PAT=${{ secrets.DAGSHUB_PAT }} \
+              ${{ secrets.DOCKER_HUB_USERNAME }}/st-score2:latest
