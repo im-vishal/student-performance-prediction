@@ -20,7 +20,7 @@ docker push virtualvishal/st-score1:v1.1
 4. sudo systemctl start docker
 5. sudo systemctl enable docker
 6. sudo docker pull virtualvishal/st-score2:latest
-7. sudo docker run -p 88:8080 -e DAGSHUB_PAT=c52d45d06347759d028fabbb3cc57e53cf6d5a33 virtualvishal/st-score2:latest
+7. sudo docker run -p 80:8080 -e DAGSHUB_PAT=c52d45d06347759d028fabbb3cc57e53cf6d5a33 virtualvishal/st-score2:latest
 8. AWS Securtiy group
 
 # CICD Flow
