@@ -26,6 +26,8 @@ WORKDIR /app
 # Copy only the necessary files from the build stage
 COPY --from=build /app /app
 
+ENV PYTHONPATH=/app
+
 RUN pip install --upgrade pip
 
 # Install Dependencies
