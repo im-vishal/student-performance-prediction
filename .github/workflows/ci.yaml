@@ -62,3 +62,4 @@ jobs:
         if: success()
         run: |
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/st-score2:latest
+

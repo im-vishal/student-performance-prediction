@@ -1,13 +1,9 @@
-auto_mix_prep
+dvc
 dagshub
 fastapi
-mlflow_skinny
 mlflow
-cloudpickle
 numpy
 pandas
-psutil
 scikit-learn
-scipy
 pydantic
 uvicorn

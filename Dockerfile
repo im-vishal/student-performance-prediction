@@ -1,19 +1,41 @@
-FROM python:3.10.15
+# Stage 1: Build Stage
+FROM python:3.10.15-slim as build
 
 WORKDIR /app
 
-COPY /main.py /app/
-
+# Copy the requirements.txt from the fastapi-app folder
 COPY /fastapi-app/requirements.txt /app/requirements.txt
 
-COPY src /app/src
+# RUN pip install --upgrade pip
 
+# # Install Dependencies
+# RUN pip install -r requirements.txt
+# RUN pip install --no-cache-dir -r requirements.txt
+# RUN pip install --no-cache-dir -i https://pypi.org/simple -r requirements.txt
+
+# Copy the code & necessary files
+COPY /main.py /app/
+COPY src /app/src
 COPY /data/processed/preprocessor.joblib /app/data/processed/preprocessor.joblib
+
+# Stage 2: Final Stage
+FROM python:3.10.15-slim as Final
+
+WORKDIR /app
+
+# Copy only the necessary files from the build stage
+COPY --from=build /app /app
 
 RUN pip install --upgrade pip
 
-RUN pip install -r requirements.txt
+# Install Dependencies
+RUN pip install -r /app/requirements.txt
 
+# # Copy the installed Python packages from the build stage
+# COPY --from=build /usr/local/lib/python3.10/site-packages /usr/local/lib/python3.12/site-packages
+# COPY --from=build /usr/local/bin /usr/local/bin
+
+# Expose the application port
 EXPOSE 8080
 
 # CMD ["python3", "main.py"]
