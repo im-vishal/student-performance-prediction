@@ -9,4 +9,4 @@ psutil==6.0.0
 scikit-learn==1.5.2
 scipy==1.14.1
 dvc==3.55.2
-# -e git+https://github.com/im-vishal/student-performance-prediction.git@301baad7bd674c587c4f6076d81fe15bb4a23ae2#egg=studentperformanceprediction
+-e git+https://github.com/im-vishal/student-performance-prediction.git@301baad7bd674c587c4f6076d81fe15bb4a23ae2#egg=studentperformanceprediction
