@@ -27,12 +27,12 @@ WORKDIR /app
 COPY --from=build /app /app
 
 # Install pip and git
-RUN apt-get update && apt-get install -y git && pip install --upgrade pip
+RUN apt-get update && apt-get install -y git
 
-# RUN pip install --upgrade pip
+RUN pip install --upgrade pip
 
 # Install Dependencies
-RUN pip install -r /app/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 # # Copy the installed Python packages from the build stage
 # COPY --from=build /usr/local/lib/python3.10/site-packages /usr/local/lib/python3.12/site-packages

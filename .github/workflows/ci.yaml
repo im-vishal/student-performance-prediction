@@ -82,5 +82,5 @@ jobs:
             docker pull 823558662715.dkr.ecr.ap-south-1.amazonaws.com/virtualvishal:latest
             docker stop my-app || true
             docker rm my-app || true
-            docker run -d -p 80:8080 -e DAGSHUB_PAT=c52d45d06347759d028fabbb3cc57e53cf6d5a33 --name my-app \
+            docker run -d -p 80:8080 -e DAGSHUB_PAT=${{ secrets.DAGSHUB_PAT }} --name my-app \
               823558662715.dkr.ecr.ap-south-1.amazonaws.com/virtualvishal:latest
