@@ -10,16 +10,16 @@ class FastAPITests(unittest.TestCase):
         # Create a TestClient instance for testing the FastAPI app
         cls.client = TestClient(app)
 
-    @patch('main.load_object')  # Mock load_object to prevent DAGSHUB_PAT issue
+    # @patch('main.load_object')  # Mock load_object to prevent DAGSHUB_PAT issue
     @patch('main.mlflow.pyfunc.load_model')  # Mock MLflow model loading
-    def test_home_page(self, mock_load_object, mock_load_model):
+    def test_home_page(self, mock_load_model):
         response = self.client.get('/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.text, '"Welcome to API for student score prediction."')
 
-    @patch('main.load_object')  # Mock load_object
+    # @patch('main.load_object')  # Mock load_object
     @patch('main.mlflow.pyfunc.load_model')  # Mock MLflow model loading
-    def test_predict_score(self, mock_load_object, mock_load_model):
+    def test_predict_score(self, mock_load_model):
         # Mock input data
         mock_input_data = {
             "gender": "male",

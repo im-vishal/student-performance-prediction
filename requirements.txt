@@ -237,3 +237,4 @@ yarg==0.1.9
 yarl==1.15.0
 zc.lockfile==3.0.post1
 zipp==3.20.2
+-e git+https://github.com/im-vishal/student-performance-prediction.git@301baad7bd674c587c4f6076d81fe15bb4a23ae2#egg=studentperformanceprediction

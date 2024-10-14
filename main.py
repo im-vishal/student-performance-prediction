@@ -3,15 +3,13 @@ from pydantic import BaseModel, Field
 from pathlib import Path
 from typing import Literal
 import uvicorn
-import numpy as np
 import pandas as pd
 import mlflow
 import mlflow.sklearn
-import dagshub
 import os
 import warnings
+import joblib
 
-from src.common.utils import load_object
 
 warnings.filterwarnings("ignore")
 
@@ -38,7 +36,7 @@ mlflow.set_tracking_uri(f'{dagshub_url}/{repo_owner}/{repo_name}.mlflow')
 # dagshub.init(repo_owner=repo_owner, repo_name=repo_name, mlflow=True)
 
 # Load preprocessor and model globally
-preprocessor = load_object(Path("data/processed/preprocessor.joblib"))
+preprocessor = joblib.load(Path("data/processed/preprocessor.joblib"))
 
 # load model from model registry
 def get_latest_model_version(model_name):
