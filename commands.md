@@ -85,7 +85,7 @@ docker push virtualvishal/st-score1:v1.1
     - unzip awscliv2.zip
     - sudo ./aws/install
     - sudo usermod -aG docker ubuntu
-    - exit
+    - exit then next
 3. add pem file as secret key to Github Secrets
 4. add deployment stage in ci.yaml
 5. commit and push
