@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+      - cicd-test
+      - docker-test
     paths-ignore:
       - 'README.md'
 
@@ -19,11 +21,25 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Lint code
+        run: echo "Linting repository"
+
+      - name: Run unit tests
+        run: echo "Running unit tests"
+
+  build-and-push-ecr-image:
+    name: Continuous Delivery
+    needs: integration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
       - name: setup python
         uses: actions/setup-python@v2
         with:
           python-version: '3.10'
-      
+
       - name: Cache pip dependencies
         uses: actions/cache@v3
         with:
@@ -48,24 +64,9 @@ jobs:
           DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
         run: python3 scripts/promote_model.py
 
-      - name: Lint code
-        run: echo "Linting repository"
-
-      - name: Run unit tests
-        run: echo "Running unit tests"
-
-  build-and-push-ecr-image:
-    name: Continuous Delivery
-    needs: integration
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
       - name: Install Utilities
         run: |
           sudo apt-get update
-          sudo apt-get install -y jq unzip
 
       - name: Log in to AWS ECR
         run: |
@@ -91,10 +92,14 @@ jobs:
           
   Continuous-Deployment:
     needs: build-and-push-ecr-image
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Install Utilities
+        run: |
+          sudo apt-get update
 
       - name: Log in to AWS ECR
         run: |
