@@ -27,6 +27,11 @@ The objective of the project is to learn about end-to-end project implementation
         - Amazon Machine Image (AMI)
 
 
+### Video: Project deployed on AWS EC2 Instance using GitHub Actions
+
+
+https://github.com/user-attachments/assets/107f46a5-c5e5-4d75-bc88-8428f24e0f51
+
 
 ## IMP CLI Commands for reference
 ### Docker flow
