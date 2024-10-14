@@ -1,22 +1,13 @@
-name: workflow
+name: CI Pipeline
 
-on:
-  push:
-    branches:
-      - main
-    paths-ignore:
-      - 'README.md'
-
-permissions:
-  id-token: write
-  contents: read
+on: push
 
 jobs:
-  integration:
-    name: Continuous Integration
+  project-testing:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Code
+      - name: checkout code
         uses: actions/checkout@v3
 
       - name: setup python
@@ -48,64 +39,33 @@ jobs:
           DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
         run: python3 scripts/promote_model.py
 
-      - name: Lint code
-        run: echo "Linting repository"
-
-      - name: Run unit tests
-        run: echo "Running unit tests"
-
-  build-and-push-ecr-image:
-    name: Continuous Delivery
-    needs: integration
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-
-      - name: Install Utilities
+      - name: Run Flask app tests
+        if: success()
+        env:
+          DAGSHUB_PAT: ${{ secrets.DAGSHUB_PAT }}
         run: |
-          sudo apt-get update
-          sudo apt-get install -y jq unzip
+          python3 -m unittest tests/fast-api-test.py
 
       - name: Log in to AWS ECR
         run: |
           aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 823558662715.dkr.ecr.ap-south-1.amazonaws.com
-          
+
       - name: Build Docker Image
         if: success()
         run: |
-          docker build -t student-performance .
+          docker build -t virtualvishal .
 
       - name: Tag Docker Image
         if: success()
         run: |
-          docker tag student-performance:latest 823558662715.dkr.ecr.ap-south-1.amazonaws.com/student-performance:latest
+          docker tag virtualvishal:latest 823558662715.dkr.ecr.ap-south-1.amazonaws.com/virtualvishal:latest
 
       - name: Push Docker image to AWS ECR
         if: success()
         run: |
-          docker push 823558662715.dkr.ecr.ap-south-1.amazonaws.com/student-performance:latest
-          
-          
-  Continuous-Deployment:
-    needs: build-and-push-ecr-image
-    runs-on: self-hosted
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Log in to AWS ECR
-        run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 823558662715.dkr.ecr.ap-south-1.amazonaws.com
-      
-      - name: Pull latest image from AWS ECR
-        if: success()
-        run: |
-          docker pull 823558662715.dkr.ecr.ap-south-1.amazonaws.com/student-performance:latest
+          docker push 823558662715.dkr.ecr.ap-south-1.amazonaws.com/virtualvishal:latest
 
       - name: Deploy to EC2
         if: success()
@@ -119,8 +79,8 @@ jobs:
             aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             aws configure set default.region ap-south-1
             aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 823558662715.dkr.ecr.ap-south-1.amazonaws.com
-            docker pull 823558662715.dkr.ecr.ap-south-1.amazonaws.com/student-performance:latest
+            docker pull 823558662715.dkr.ecr.ap-south-1.amazonaws.com/virtualvishal:latest
             docker stop my-app || true
             docker rm my-app || true
             docker run -d -p 80:8080 -e DAGSHUB_PAT=${{ secrets.DAGSHUB_PAT }} --name my-app \
-              823558662715.dkr.ecr.ap-south-1.amazonaws.com/student-performance:latest
+              823558662715.dkr.ecr.ap-south-1.amazonaws.com/virtualvishal:latest
