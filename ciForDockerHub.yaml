@@ -46,26 +46,22 @@ jobs:
         run: |
           python3 -m unittest tests/fast-api-test.py
 
-      - name: Log in to AWS ECR
-        run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 823558662715.dkr.ecr.ap-south-1.amazonaws.com
+      - name: Log in to Docker Hub
+        if: success()
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       - name: Build Docker Image
         if: success()
         run: |
-          docker build -t virtualvishal .
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/st-score2:latest .
 
-      - name: Tag Docker Image
+      - name: Push Docker image to Docker Hub
         if: success()
         run: |
-          docker tag virtualvishal:latest 823558662715.dkr.ecr.ap-south-1.amazonaws.com/virtualvishal:latest
-
-      - name: Push Docker image to AWS ECR
-        if: success()
-        run: |
-          docker push 823558662715.dkr.ecr.ap-south-1.amazonaws.com/virtualvishal:latest
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/st-score2:latest
 
       - name: Deploy to EC2
         if: success()

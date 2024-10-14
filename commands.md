@@ -23,7 +23,7 @@ docker push virtualvishal/st-score1:v1.1
 7. sudo docker run -p 80:8080 -e DAGSHUB_PAT=c52d45d06347759d028fabbb3cc57e53cf6d5a33 virtualvishal/st-score2:latest
 8. AWS Securtiy group
 
-# CICD Flow
+# CICD Flow with DockerHub
 1. create an ec2 instance
 2. sudo apt-get update
 3. sudo apt-get install -y docker.io
@@ -39,6 +39,37 @@ docker push virtualvishal/st-score1:v1.1
 10. modify ci.yaml
 11. push
 12. AWS security group
+
+# run docker image in ecr
+1. aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 823558662715.dkr.ecr.ap-south-1.amazonaws.com
+2. docker build -t virtualvishal .
+3. docker tag virtualvishal:latest 823558662715.dkr.ecr.ap-south-1.amazonaws.com/virtualvishal:v1.4
+4. docker push 823558662715.dkr.ecr.ap-south-1.amazonaws.com/virtualvishal:v1.4
+5. Open new terminal
+6. docker pull 823558662715.dkr.ecr.ap-south-1.amazonaws.com/virtualvishal:v1.4
+7. docker run -d -p 8888:8080 --name my-app 823558662715.dkr.ecr.ap-south-1.amazonaws.com/virtualvishal:v1.4 (wrong method dagshub_pat not set)
+8. docker stop my-app
+9. docker rm my-app
+10. docker run -d -p 8888:8080 -e DAGSHUB_PAT=c52d45d06347759d028fabbb3cc57e53cf6d5a33 --name my-app 823558662715.dkr.ecr.ap-south-1.amazonaws.com/virtualvishal:v1.4
+
+
+# CICD Flow with ECR
+1. setup ec2 machine
+2. sudo apt-get update
+3. sudo apt-get install -y docker.io
+4. sudo systemctl start docker
+5. sudo systemctl enable docker
+6. sudo apt-get update
+7. sudo apt-get install -y unzip curl
+8. curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+9. unzip awscliv2.zip
+10. sudo ./aws/install
+
+11. sudo usermod -aG docker ubuntu
+12. aws configure
+13. aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 823558662715.dkr.ecr.ap-south-1.amazonaws.com
+14. docker pull 823558662715.dkr.ecr.ap-south-1.amazonaws.com/virtualvishal:v1.4
+15. docker run -d -p 8888:8080 -e DAGSHUB_PAT=c52d45d06347759d028fabbb3cc57e53cf6d5a33 --name my-app 823558662715.dkr.ecr.ap-south-1.amazonaws.com/virtualvishal:v1.4
 
 # squash commits
 - git switch -c test-branch

@@ -26,12 +26,10 @@ WORKDIR /app
 # Copy only the necessary files from the build stage
 COPY --from=build /app /app
 
-ENV PYTHONPATH=/app
-
 # Install pip and git
 RUN apt-get update && apt-get install -y git && pip install --upgrade pip
 
-RUN pip install --upgrade pip
+# RUN pip install --upgrade pip
 
 # Install Dependencies
 RUN pip install -r /app/requirements.txt
