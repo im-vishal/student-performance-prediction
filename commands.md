@@ -71,6 +71,26 @@ docker push virtualvishal/st-score1:v1.1
 14. docker pull 823558662715.dkr.ecr.ap-south-1.amazonaws.com/virtualvishal:v1.4
 15. docker run -d -p 8888:8080 -e DAGSHUB_PAT=c52d45d06347759d028fabbb3cc57e53cf6d5a33 --name my-app 823558662715.dkr.ecr.ap-south-1.amazonaws.com/virtualvishal:v1.4
 
+# CICD with ECR and EC2 deployment
+1. create ec2
+2. setup
+    - setup ec2 machine
+    - sudo apt-get update
+    - sudo apt-get install -y docker.io
+    - sudo systemctl start docker
+    - sudo systemctl enable docker
+    - sudo apt-get update
+    - sudo apt-get install -y unzip curl
+    - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    - unzip awscliv2.zip
+    - sudo ./aws/install
+    - sudo usermod -aG docker ubuntu
+    - exit
+3. add pem file as secret key to Github Secrets
+4. add deployment stage in ci.yaml
+5. commit and push
+6. add security group
+
 # squash commits
 - git switch -c test-branch
 - git add .
