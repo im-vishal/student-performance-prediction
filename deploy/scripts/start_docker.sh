@@ -5,13 +5,13 @@ aws ecr get-login-password --region ap-south-1 | docker login --username AWS --p
 # Pull the latest image
 docker pull 823558662715.dkr.ecr.ap-south-1.amazonaws.com/virtualvishal:latest
 
-# Check if the container 'campusx-app' is running
+# Check if the container app is running
 if [ "$(docker ps -q -f name=st-score-app)" ]; then
     # Stop the running container
     docker stop st-score-app
 fi
 
-# Check if the container 'campusx-app' exists (stopped or running)
+# Check if the container app exists (stopped or running)
 if [ "$(docker ps -aq -f name=st-score-app)" ]; then
     # Remove the container if it exists
     docker rm st-score-app
